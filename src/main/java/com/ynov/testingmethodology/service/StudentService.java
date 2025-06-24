@@ -1,4 +1,4 @@
-package main.service;
+package com.ynov.testingmethodology.service;
 
 import model.Student;
 import model.Reservation;
