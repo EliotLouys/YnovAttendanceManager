@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import model.Reservation;
 
 /**
  * Représente un étudiant pouvant effectuer des réservations de salles.
@@ -43,10 +44,11 @@ public class Student {
 
     /**
      * Ajoute une réservation à l'étudiant.
+     *
      * @param reservation Réservation à ajouter
      */
     public void addBooking(Reservation reservation) {
         reservations.add(reservation);
     }
+}
 
-/**
