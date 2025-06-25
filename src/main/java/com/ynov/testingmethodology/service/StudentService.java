@@ -1,9 +1,9 @@
 package com.ynov.testingmethodology.service;
 
 import model.Student;
-import model.Reservation;
-import repository.StudentRepository;
-import repository.ReservationRepository;
+import com.ynov.testingmethodology.model.Reservation;
+import com.ynov.testingmethodology.repository.StudentRepository;
+import com.ynov.testingmethodology.repository.ReservationRepository;
 
 import java.util.List;
 import java.util.Optional;

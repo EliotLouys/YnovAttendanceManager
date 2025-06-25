@@ -1,12 +1,14 @@
-package model;
+package com.ynov.testingmethodology.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import model.Student;
+import model.Room;
 
 public class Reservation {
     private String id;
     private List<Student> students;
-    private Room room;
+    private model.Room room;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 

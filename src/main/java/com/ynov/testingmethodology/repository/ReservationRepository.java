@@ -1,6 +1,6 @@
-package repository;
+package com.ynov.testingmethodology.repository;
 
-import model.Reservation;
+import com.ynov.testingmethodology.model.Reservation;
 import java.util.List;
 
 public interface ReservationRepository {

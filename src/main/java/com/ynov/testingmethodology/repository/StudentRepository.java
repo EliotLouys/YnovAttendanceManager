@@ -1,4 +1,4 @@
-package repository;
+package com.ynov.testingmethodology.repository;
 
 import model.Student;
 import java.util.List;
