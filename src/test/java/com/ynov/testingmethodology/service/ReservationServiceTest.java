@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -170,6 +171,50 @@ public class ReservationServiceTest {
 
             // Then
             assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+        }
+
+        @Test
+        @DisplayName("Start time before now - should throw IllegalArgumentException")
+        void createReservation_withStartTimeBeforeNow_ShouldThrowIllegalArgumentException() {
+            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class)) {
+                // Given
+                LocalDateTime fixedDateTime = LocalDateTime.of(2025, 6, 20, 11, 0);
+                mockedDateTime.when(LocalDateTime::now).thenReturn(fixedDateTime);
+
+                Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                        LocalDateTime.of(2025, 6, 25, 10, 0),
+                        LocalDateTime.of(2025, 6, 25, 12, 0));
+
+                // When
+                LocalDateTime start = LocalDateTime.of(2025, 6, 19, 10, 0);
+                res.setStartTime(start);
+
+                // Then
+                assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+            }
+        }
+
+        @Test
+        @DisplayName("Both start and end time before now - should throw IllegalArgumentException")
+        void createReservation_withEndTimeBeforeNow_ShouldThrowIllegalArgumentException() {
+            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class)) {
+                // Given
+                LocalDateTime fixedDateTime = LocalDateTime.of(2025, 6, 20, 11, 0);
+                mockedDateTime.when(LocalDateTime::now).thenReturn(fixedDateTime);
+
+                Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                        LocalDateTime.of(2025, 6, 25, 10, 0),
+                        LocalDateTime.of(2025, 6, 25, 12, 0));
+
+                // When
+                LocalDateTime start = LocalDateTime.of(2025, 6, 19, 10, 0);
+                res.setStartTime(start);
+                LocalDateTime end = LocalDateTime.of(2025, 6, 19, 8, 0);
+                res.setEndTime(end);
+
+                // Then
+                assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+            }
         }
     }
 
