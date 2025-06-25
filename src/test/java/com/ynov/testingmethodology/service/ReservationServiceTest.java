@@ -205,8 +205,10 @@ public class ReservationServiceTest {
     class GetAllTests {
         @Test
         @DisplayName("Should return all reservations")
-        void getAll() {
-            Reservation res = sampleReservation();
+        void getAllReservations_shouldReturnAllReservations() {
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
             List<Reservation> list = Arrays.asList(res);
             when(reservationRepo.findAll()).thenReturn(list);
 
