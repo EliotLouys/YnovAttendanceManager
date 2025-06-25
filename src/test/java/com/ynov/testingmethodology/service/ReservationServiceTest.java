@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -165,10 +167,10 @@ public class ReservationServiceTest {
             Reservation res2 = new Reservation("res1", Arrays.asList(s1), room,
                     LocalDateTime.of(2025, 6, 25, 12, 0),
                     LocalDateTime.of(2025, 6, 25, 14, 0));
-            when(reservationRepo.findByStudentId(studentId)).thenReturn(Arrays.asList(res,res2));
+            when(reservationRepo.findByStudentId(studentId)).thenReturn(Arrays.asList(res, res2));
 
             List<Reservation> result = reservationService.getReservationsByStudent(studentId);
-            assertEquals(Arrays.asList(res,res2), result);
+            assertEquals(Arrays.asList(res, res2), result);
         }
 
         @Test
@@ -200,10 +202,10 @@ public class ReservationServiceTest {
                     LocalDateTime.of(2025, 6, 25, 12, 0),
                     LocalDateTime.of(2025, 6, 25, 14, 0));
 
-            when(reservationRepo.findByRoomId(roomId)).thenReturn(Arrays.asList(res,res2));
+            when(reservationRepo.findByRoomId(roomId)).thenReturn(Arrays.asList(res, res2));
 
             List<Reservation> result = reservationService.getReservationsByRoom(roomId);
-            assertEquals(Arrays.asList(res,res2), result);
+            assertEquals(Arrays.asList(res, res2), result);
         }
 
         @Test
@@ -263,5 +265,38 @@ public class ReservationServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("getPastReservations Tests")
+    class GetPastReservationsTests {
+        @Test
+        @DisplayName("Nominal case - should return a list of reservations")
+        void getPastReservationsNominal() {
 
+            try (MockedStatic<LocalDateTime> mock = Mockito.mockStatic(LocalDateTime.class, Mockito.CALLS_REAL_METHODS)) {
+                // Given
+                LocalDateTime fixedNow = LocalDateTime.of(2025, 1, 1, 0, 0);
+
+                mock.when(LocalDateTime::now).thenReturn(fixedNow);
+
+                Student s1 = new Student("s1", "John", "Doe");
+                Room room = new Room("r1", "Room A", 30);
+                Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                        LocalDateTime.of(2025, 6, 25, 10, 0),
+                        LocalDateTime.of(2025, 6, 25, 12, 0));
+                Reservation res2 = new Reservation("res1", Arrays.asList(s1), room,
+                        LocalDateTime.of(2025, 6, 25, 12, 0),
+                        LocalDateTime.of(2025, 6, 25, 14, 0));
+
+                List<Reservation> expectedReservation = Arrays.asList(res, res2);
+                when(reservationRepo.findBeforeDate(fixedNow)).thenReturn(expectedReservation);
+
+                //When
+                List<Reservation> result = reservationService.getPastReservations();
+
+                //Then
+                assertEquals(expectedReservation, result);
+            }
+        }
+
+    }
 }

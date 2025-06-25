@@ -85,6 +85,10 @@ public class ReservationService {
         reservationRepo.delete(existing.get());
     }
 
+    public List<Reservation> getPastReservations() {
+        return reservationRepo.findBeforeDate(LocalDateTime.now());
+    }
+
 
     /**
      * Valide les données d'une réservation
