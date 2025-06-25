@@ -1,6 +1,8 @@
 package com.ynov.testingmethodology.repository;
 
 import com.ynov.testingmethodology.model.Reservation;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,4 +13,5 @@ public interface ReservationRepository {
     List<Reservation> findByRoomId(String roomId);
     void delete(Reservation reservation);
     Optional<Reservation> findById(String reservationId);
+    List<Reservation> findAfterDate(LocalDateTime date);
 }

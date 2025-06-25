@@ -191,6 +191,7 @@ public class ReservationServiceTest {
 
                 // Then
                 assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+                verify(reservationRepo).save(res);
             }
         }
 
@@ -214,6 +215,7 @@ public class ReservationServiceTest {
 
                 // Then
                 assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+                verify(reservationRepo).save(res);
             }
         }
     }
@@ -421,5 +423,22 @@ public class ReservationServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("getUpcomingReservations Tests")
+    class GetUpcomingReservationsTests {
+        @Test
+        @DisplayName("Nominal case - should return list")
+        void getUpcomingReservations_ShouldReturnUpcomingReservations() {
+            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class)) {
+                // Given
+                LocalDateTime fixedDateTime = LocalDateTime.of(2025, 6, 15, 11, 0);
+                mockedDateTime.when(LocalDateTime::now).thenReturn(fixedDateTime);
 
+                when(reservationRepo.findAfterDate(fixedDateTime)).thenReturn(Arrays.asList(testReservation,savedReservation));
+
+                List<Reservation> result = reservationService.getUpcomingReservations();
+                assertEquals(Arrays.asList(testReservation, savedReservation), result);
+            }
+        }
+    }
 }

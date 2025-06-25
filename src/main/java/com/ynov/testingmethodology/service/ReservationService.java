@@ -84,6 +84,13 @@ public class ReservationService {
         reservationRepo.delete(existing.get());
     }
 
+    /**
+     * Retourne les réservations à venir
+     */
+    public List<Reservation> getUpcomingReservations() {
+        return reservationRepo.findAfterDate(LocalDateTime.now());
+    }
+
 
     /**
      * Valide les données d'une réservation
