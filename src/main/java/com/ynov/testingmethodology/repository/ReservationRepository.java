@@ -2,6 +2,7 @@ package com.ynov.testingmethodology.repository;
 
 import com.ynov.testingmethodology.model.Reservation;
 import java.util.List;
+import java.util.Optional;
 
 public interface ReservationRepository {
     void save(Reservation reservation);
@@ -9,4 +10,5 @@ public interface ReservationRepository {
     List<Reservation> findByStudentId(String studentId);
     List<Reservation> findByRoomId(String roomId);
     void delete(Reservation reservation);
+    Optional<Reservation> findById(String reservationId);
 }

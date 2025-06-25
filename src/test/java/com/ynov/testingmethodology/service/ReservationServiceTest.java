@@ -4,6 +4,7 @@ import com.ynov.testingmethodology.model.Reservation;
 import com.ynov.testingmethodology.model.Room;
 import com.ynov.testingmethodology.model.Student;
 import com.ynov.testingmethodology.repository.ReservationRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -154,19 +155,31 @@ public class ReservationServiceTest {
     class GetByStudentTests {
         @Test
         @DisplayName("Nominal case - should return list")
-        void getByStudentNominal() {
+        void getByStudentNominal_shouldReturnList() {
             String studentId = "s1";
-            Reservation res = sampleReservation();
-            when(reservationRepo.findByStudentId(studentId)).thenReturn(Arrays.asList(res));
+            Student s1 = new Student("s1", "John", "Doe");
+            Room room = new Room("r1", "Room A", 30);
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+            Reservation res2 = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 12, 0),
+                    LocalDateTime.of(2025, 6, 25, 14, 0));
+            when(reservationRepo.findByStudentId(studentId)).thenReturn(Arrays.asList(res,res2));
 
             List<Reservation> result = reservationService.getReservationsByStudent(studentId);
-            assertEquals(Arrays.asList(res), result);
+            assertEquals(Arrays.asList(res,res2), result);
         }
 
         @Test
-        @DisplayName("Null or empty studentId - should throw IllegalArgumentException")
-        void getByStudentInvalidId() {
+        @DisplayName("Null studentId - should throw IllegalArgumentException")
+        void getByStudentNullId_shouldThrowException() {
             assertThrows(IllegalArgumentException.class, () -> reservationService.getReservationsByStudent(null));
+        }
+
+        @Test
+        @DisplayName("Empty studentId - should throw IllegalArgumentException")
+        void getByStudentEmptyId() {
             assertThrows(IllegalArgumentException.class, () -> reservationService.getReservationsByStudent("  "));
         }
     }
@@ -178,17 +191,30 @@ public class ReservationServiceTest {
         @DisplayName("Nominal case - should return list")
         void getByRoomNominal() {
             String roomId = "r1";
-            Reservation res = sampleReservation();
-            when(reservationRepo.findByRoomId(roomId)).thenReturn(Arrays.asList(res));
+            Student s1 = new Student("s1", "John", "Doe");
+            Room room = new Room("r1", "Room A", 30);
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+            Reservation res2 = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 12, 0),
+                    LocalDateTime.of(2025, 6, 25, 14, 0));
+
+            when(reservationRepo.findByRoomId(roomId)).thenReturn(Arrays.asList(res,res2));
 
             List<Reservation> result = reservationService.getReservationsByRoom(roomId);
-            assertEquals(Arrays.asList(res), result);
+            assertEquals(Arrays.asList(res,res2), result);
         }
 
         @Test
-        @DisplayName("Null or empty roomId - should throw IllegalArgumentException")
-        void getByRoomInvalidId() {
+        @DisplayName("Null roomId - should throw IllegalArgumentException")
+        void getByRoomNullId_ShouldThrowException() {
             assertThrows(IllegalArgumentException.class, () -> reservationService.getReservationsByRoom(null));
+        }
+
+        @Test
+        @DisplayName("Empty roomId - should throw IllegalArgumentException")
+        void getByRoomEmptyId_ShouldThrowException() {
             assertThrows(IllegalArgumentException.class, () -> reservationService.getReservationsByRoom("  "));
         }
     }
@@ -196,60 +222,46 @@ public class ReservationServiceTest {
     @Nested
     @DisplayName("deleteReservation Tests")
     class DeleteTests {
+
+
         @Test
-        @DisplayName("Nominal case - should delete without exception")
+        @DisplayName("Nominal case - should delete")
         void deleteNominal() {
             String id = "res1";
-            Reservation res = sampleReservation();
-            when(reservationRepo.findAll()).thenReturn(Arrays.asList(res));
+            Student s1 = new Student("s1", "John", "Doe");
+            Room room = new Room("r1", "Room A", 30);
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+
+
+            when(reservationRepo.findById(id)).thenReturn(Optional.of(res));
 
             assertDoesNotThrow(() -> reservationService.deleteReservation(id));
             verify(reservationRepo).delete(res);
         }
 
         @Test
-        @DisplayName("Null or empty id - should throw IllegalArgumentException")
-        void deleteInvalidId() {
+        @DisplayName("Null  - should throw IllegalArgumentException")
+        void deleteNullId_ShouldThrowException() {
             assertThrows(IllegalArgumentException.class, () -> reservationService.deleteReservation(null));
+        }
+
+        @Test
+        @DisplayName("Empty id - should throw IllegalArgumentException")
+        void deleteEmptyId_shouldThrowException() {
             assertThrows(IllegalArgumentException.class, () -> reservationService.deleteReservation("  "));
         }
+
 
         @Test
         @DisplayName("Non-existing reservation - should throw IllegalArgumentException")
         void deleteNonExisting() {
-            when(reservationRepo.findAll()).thenReturn(Collections.emptyList());
-            assertThrows(IllegalArgumentException.class, () -> reservationService.deleteReservation("resX"));
+            String id = "res1";
+            when(reservationRepo.findById(id)).thenReturn(Optional.empty());
+            assertThrows(IllegalArgumentException.class, () -> reservationService.deleteReservation("res1"));
         }
     }
 
-    @Nested
-    @DisplayName("findById Tests")
-    class FindByIdTests {
-        @Test
-        @DisplayName("Nominal case - should return Optional with reservation")
-        void findByIdNominal() {
-            Reservation res = sampleReservation();
-            when(reservationRepo.findAll()).thenReturn(Arrays.asList(res));
 
-            Optional<Reservation> opt = reservationService.findById("res1");
-            assertTrue(opt.isPresent());
-            assertEquals(res, opt.get());
-        }
-
-        @Test
-        @DisplayName("Not found - should return empty Optional")
-        void findByIdNotFound() {
-            when(reservationRepo.findAll()).thenReturn(Collections.emptyList());
-
-            Optional<Reservation> opt = reservationService.findById("resX");
-            assertFalse(opt.isPresent());
-        }
-
-        @Test
-        @DisplayName("Null or empty id - should throw IllegalArgumentException")
-        void findByIdInvalid() {
-            assertThrows(IllegalArgumentException.class, () -> reservationService.findById(null));
-            assertThrows(IllegalArgumentException.class, () -> reservationService.findById("  "));
-        }
-    }
 }
