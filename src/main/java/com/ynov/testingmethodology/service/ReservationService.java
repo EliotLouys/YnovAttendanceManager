@@ -91,6 +91,13 @@ public class ReservationService {
         return reservationRepo.findAfterDate(LocalDateTime.now());
     }
 
+    /**
+     * Retourne les réservations passées 
+     */
+    public List<Reservation> getPastReservations() {
+        return reservationRepo.findBeforeDate(LocalDateTime.now());
+    }
+
 
     /**
      * Valide les données d'une réservation

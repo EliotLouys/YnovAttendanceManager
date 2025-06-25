@@ -14,4 +14,6 @@ public interface ReservationRepository {
     void delete(Reservation reservation);
     Optional<Reservation> findById(String reservationId);
     List<Reservation> findAfterDate(LocalDateTime date);
+
+    List<Reservation> findBeforeDate(LocalDateTime date);
 }

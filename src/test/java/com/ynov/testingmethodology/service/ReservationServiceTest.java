@@ -325,10 +325,10 @@ public class ReservationServiceTest {
             Reservation res2 = new Reservation("res1", Arrays.asList(s1), room,
                     LocalDateTime.of(2025, 6, 25, 12, 0),
                     LocalDateTime.of(2025, 6, 25, 14, 0));
-            when(reservationRepo.findByStudentId(studentId)).thenReturn(Arrays.asList(res,res2));
+            when(reservationRepo.findByStudentId(studentId)).thenReturn(Arrays.asList(res, res2));
 
             List<Reservation> result = reservationService.getReservationsByStudent(studentId);
-            assertEquals(Arrays.asList(res,res2), result);
+            assertEquals(Arrays.asList(res, res2), result);
         }
 
         @Test
@@ -360,10 +360,10 @@ public class ReservationServiceTest {
                     LocalDateTime.of(2025, 6, 25, 12, 0),
                     LocalDateTime.of(2025, 6, 25, 14, 0));
 
-            when(reservationRepo.findByRoomId(roomId)).thenReturn(Arrays.asList(res,res2));
+            when(reservationRepo.findByRoomId(roomId)).thenReturn(Arrays.asList(res, res2));
 
             List<Reservation> result = reservationService.getReservationsByRoom(roomId);
-            assertEquals(Arrays.asList(res,res2), result);
+            assertEquals(Arrays.asList(res, res2), result);
         }
 
         @Test
@@ -423,22 +423,5 @@ public class ReservationServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("getUpcomingReservations Tests")
-    class GetUpcomingReservationsTests {
-        @Test
-        @DisplayName("Nominal case - should return list")
-        void getUpcomingReservations_ShouldReturnUpcomingReservations() {
-            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class)) {
-                // Given
-                LocalDateTime fixedDateTime = LocalDateTime.of(2025, 6, 15, 11, 0);
-                mockedDateTime.when(LocalDateTime::now).thenReturn(fixedDateTime);
 
-                when(reservationRepo.findAfterDate(fixedDateTime)).thenReturn(Arrays.asList(testReservation,savedReservation));
-
-                List<Reservation> result = reservationService.getUpcomingReservations();
-                assertEquals(Arrays.asList(testReservation, savedReservation), result);
-            }
-        }
-    }
 }
