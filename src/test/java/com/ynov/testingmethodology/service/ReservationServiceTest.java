@@ -91,6 +91,16 @@ public class ReservationServiceTest {
         }
 
         @Test
+        @DisplayName("Null id - should throw IllegalArgumentException")
+        void createReservation_withNullId_ShouldThrowIllegalArgumentException() {
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+            res.setId(null);
+            assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+        }
+
+        @Test
         @DisplayName("Null room - should throw IllegalArgumentException")
         void createReservation_withNullRoom_ShouldThrowIllegalArgumentException() {
             Reservation res = new Reservation("res1", Arrays.asList(s1), room,
