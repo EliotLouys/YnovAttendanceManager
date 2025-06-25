@@ -64,14 +64,16 @@ public class ReservationServiceTest {
         @Test
         @DisplayName("Valid reservation - should save and return reservation")
         void createReservation_withValidReservation_shouldReturnReservation() {
-            when(reservationRepo.save(testReservation)).thenReturn(testReservation);
-
-            Reservation result = reservationService.createReservation(new Reservation("res1", Arrays.asList(s1), room,
+            //Given
+            Reservation res1 = new Reservation("res1", Arrays.asList(s1), room,
                     LocalDateTime.of(2025, 6, 25, 10, 0),
-                    LocalDateTime.of(2025, 6, 25, 12, 0)));
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
 
-            assertEquals(testReservation, result);
-            verify(reservationRepo).save(testReservation);
+            when(reservationRepo.save(res1)).thenReturn(res1);
+
+            Reservation result = reservationService.createReservation(res1);
+            assertEquals(res1, result);
+            verify(reservationRepo).save(res1);
         }
 
         @Test
@@ -181,7 +183,7 @@ public class ReservationServiceTest {
             Reservation res = new Reservation("res1", Arrays.asList(s1), room,
                     LocalDateTime.of(2025, 6, 25, 10, 0),
                     LocalDateTime.of(2025, 6, 25, 12, 0));
-            when(reservationRepo.findAll()).thenReturn(Arrays.asList(res));
+            when(reservationRepo.findById("res1")).thenReturn(Optional.of(res));
             when(reservationRepo.save(res)).thenReturn(res);
 
             // When
@@ -193,7 +195,7 @@ public class ReservationServiceTest {
         }
 
         @Test
-        @DisplayName("Null or empty id - should throw IllegalArgumentException")
+        @DisplayName("Empty id - should throw IllegalArgumentException")
         void updateReservation_withInvalidId_ShouldThrowIllegalArgumentException() {
             // Given
             Reservation res = new Reservation("res1", Arrays.asList(s1), room,
@@ -208,12 +210,37 @@ public class ReservationServiceTest {
         }
 
         @Test
+        @DisplayName("Null id - should throw IllegalArgumentException")
+        void updateReservation_withNullId_ShouldThrowIllegalArgumentException() {
+            // Given
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+
+            // When
+            res.setId(null);
+
+            // Then
+            assertThrows(IllegalArgumentException.class, () -> reservationService.updateReservation(res));
+        }
+
+        @Test
+        @DisplayName("Null reservation - should throw IllegalArgumentException")
+        void updateReservation_withNullReservation_ShouldThrowIllegalArgumentException() {
+            // Given
+            Reservation res = null;
+
+            // Then
+            assertThrows(IllegalArgumentException.class, () -> reservationService.updateReservation(res));
+        }
+
+        @Test
         @DisplayName("Non-existing reservation - should throw IllegalArgumentException")
         void updateReservation_withNonExistingReservation_ShouldThrowIllegalArgumentException() {
             Reservation res = new Reservation("res1", Arrays.asList(s1), room,
                     LocalDateTime.of(2025, 6, 25, 10, 0),
                     LocalDateTime.of(2025, 6, 25, 12, 0));
-            when(reservationRepo.findAll()).thenReturn(Collections.emptyList());
+            when(reservationRepo.findById("res1")).thenReturn(Optional.empty());
 
             assertThrows(IllegalArgumentException.class, () -> reservationService.updateReservation(res));
         }

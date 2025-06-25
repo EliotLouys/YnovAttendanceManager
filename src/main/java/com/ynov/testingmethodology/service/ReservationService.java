@@ -23,8 +23,8 @@ public class ReservationService {
      */
     public Reservation createReservation(Reservation reservation) {
         validate(reservation);
-        reservationRepo.save(reservation);
-        return reservation;
+        return reservationRepo.save(reservation);
+
     }
 
     /**
@@ -40,8 +40,7 @@ public class ReservationService {
         if (existing.isEmpty()) {
             throw new IllegalArgumentException("Reservation does not exist with id: " + reservation.getId());
         }
-        reservationRepo.save(reservation);
-        return reservation;
+        return reservationRepo.save(reservation);
     }
 
     /**
