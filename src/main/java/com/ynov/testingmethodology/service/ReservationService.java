@@ -36,7 +36,7 @@ public class ReservationService {
         }
         validate(reservation);
         // On peut contrôler que la réservation existe
-        Optional<Reservation> existing = findById(reservation.getId());
+        Optional<Reservation> existing = reservationRepo.findById(reservation.getId());
         if (existing.isEmpty()) {
             throw new IllegalArgumentException("Reservation does not exist with id: " + reservation.getId());
         }
@@ -78,25 +78,13 @@ public class ReservationService {
         if (reservationId == null || reservationId.trim().isEmpty()) {
             throw new IllegalArgumentException("Reservation id is required");
         }
-        Optional<Reservation> existing = findById(reservationId);
+        Optional<Reservation> existing = reservationRepo.findById(reservationId);
         if (existing.isEmpty()) {
             throw new IllegalArgumentException("Reservation does not exist with id: " + reservationId);
         }
         reservationRepo.delete(existing.get());
     }
 
-    /**
-     * Recherche une réservation par son id
-     */
-    public Optional<Reservation> findById(String reservationId) {
-        if (reservationId == null || reservationId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Reservation id is required");
-        }
-        // Implémentation basique via findAll, car pas de findById fourni
-        return reservationRepo.findAll().stream()
-                .filter(r -> reservationId.equals(r.getId()))
-                .findFirst();
-    }
 
     /**
      * Valide les données d'une réservation
