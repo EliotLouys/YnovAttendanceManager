@@ -23,6 +23,9 @@ public class ReservationService {
      */
     public Reservation createReservation(Reservation reservation) {
         validate(reservation);
+        if (reservation.getStartTime().isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("Start and end times can't be before now");
+        }
         return reservationRepo.save(reservation);
 
     }

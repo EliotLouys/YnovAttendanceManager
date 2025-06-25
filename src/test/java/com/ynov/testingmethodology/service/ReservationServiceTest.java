@@ -67,15 +67,21 @@ public class ReservationServiceTest {
         @DisplayName("Valid reservation - should save and return reservation")
         void createReservation_withValidReservation_shouldReturnReservation() {
             //Given
-            Reservation res1 = new Reservation("res1", Arrays.asList(s1), room,
-                    LocalDateTime.of(2025, 6, 25, 10, 0),
-                    LocalDateTime.of(2025, 6, 25, 12, 0));
+            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class, Mockito.CALLS_REAL_METHODS)) {
+                // Given
+                LocalDateTime fixedDateTime = LocalDateTime.of(2025, 6, 20, 11, 0);
+                mockedDateTime.when(LocalDateTime::now).thenReturn(fixedDateTime);
 
-            when(reservationRepo.save(res1)).thenReturn(res1);
+                Reservation res1 = new Reservation("res1", Arrays.asList(s1), room,
+                        LocalDateTime.of(2025, 6, 25, 10, 0),
+                        LocalDateTime.of(2025, 6, 25, 12, 0));
 
-            Reservation result = reservationService.createReservation(res1);
-            assertEquals(res1, result);
-            verify(reservationRepo).save(res1);
+                when(reservationRepo.save(res1)).thenReturn(res1);
+
+                Reservation result = reservationService.createReservation(res1);
+                assertEquals(res1, result);
+                verify(reservationRepo).save(res1);
+            }
         }
 
         @Test
@@ -177,7 +183,7 @@ public class ReservationServiceTest {
         @Test
         @DisplayName("Start time before now - should throw IllegalArgumentException")
         void createReservation_withStartTimeBeforeNow_ShouldThrowIllegalArgumentException() {
-            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class)) {
+            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class, Mockito.CALLS_REAL_METHODS)) {
                 // Given
                 LocalDateTime fixedDateTime = LocalDateTime.of(2025, 6, 20, 11, 0);
                 mockedDateTime.when(LocalDateTime::now).thenReturn(fixedDateTime);
@@ -192,14 +198,14 @@ public class ReservationServiceTest {
 
                 // Then
                 assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
-                verify(reservationRepo).save(res);
+                verify(reservationRepo,never()).save(res);
             }
         }
 
         @Test
-        @DisplayName("Both start and end time before now - should throw IllegalArgumentException")
+        @DisplayName("IRRELEVANT - Both start and end time before now - should throw IllegalArgumentException")
         void createReservation_withEndTimeBeforeNow_ShouldThrowIllegalArgumentException() {
-            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class)) {
+            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class, Mockito.CALLS_REAL_METHODS)) {
                 // Given
                 LocalDateTime fixedDateTime = LocalDateTime.of(2025, 6, 20, 11, 0);
                 mockedDateTime.when(LocalDateTime::now).thenReturn(fixedDateTime);
@@ -216,9 +222,10 @@ public class ReservationServiceTest {
 
                 // Then
                 assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
-                verify(reservationRepo).save(res);
+                verify(reservationRepo,never()).save(res);
             }
         }
+
     }
 
     @Nested
@@ -430,7 +437,7 @@ public class ReservationServiceTest {
         @Test
         @DisplayName("Nominal case - should return list")
         void getUpcomingReservations_ShouldReturnUpcomingReservations() {
-            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class)) {
+            try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class, Mockito.CALLS_REAL_METHODS)) {
                 // Given
                 LocalDateTime fixedDateTime = LocalDateTime.of(2025, 6, 15, 11, 0);
                 mockedDateTime.when(LocalDateTime::now).thenReturn(fixedDateTime);
