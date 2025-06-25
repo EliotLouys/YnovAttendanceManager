@@ -2,7 +2,7 @@ package com.ynov.testingmethodology.service;
 
 
 import com.ynov.testingmethodology.repository.RoomRepository;
-import model.Room;
+import com.ynov.testingmethodology.model.Room;
 import org.h2.command.dml.MergeUsing;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,7 +12,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.*;
-import model.Student;
+import com.ynov.testingmethodology.model.Student;
 import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

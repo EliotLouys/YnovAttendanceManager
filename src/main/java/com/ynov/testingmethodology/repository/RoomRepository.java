@@ -1,6 +1,6 @@
 package com.ynov.testingmethodology.repository;
 
-import model.Room;
+import com.ynov.testingmethodology.model.Room;
 import java.util.List;
 import java.util.Optional;
 

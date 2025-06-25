@@ -1,6 +1,6 @@
 package com.ynov.testingmethodology.repository;
 
-import model.Student;
+import com.ynov.testingmethodology.model.Student;
 import java.util.List;
 import java.util.Optional;
 

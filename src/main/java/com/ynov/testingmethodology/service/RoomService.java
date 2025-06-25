@@ -1,7 +1,7 @@
 package com.ynov.testingmethodology.service;
 
 
-import model.Room;
+import com.ynov.testingmethodology.model.Room;
 import com.ynov.testingmethodology.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 

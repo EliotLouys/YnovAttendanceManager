@@ -1,6 +1,6 @@
 package com.ynov.testingmethodology.service;
 
-import model.Student;
+import com.ynov.testingmethodology.model.Student;
 import com.ynov.testingmethodology.model.Reservation;
 import com.ynov.testingmethodology.repository.StudentRepository;
 import com.ynov.testingmethodology.repository.ReservationRepository;

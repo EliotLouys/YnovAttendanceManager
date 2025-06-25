@@ -1,8 +1,8 @@
-package model;
+package com.ynov.testingmethodology.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import model.Reservation;
+import com.ynov.testingmethodology.model.Reservation;
 
 /**
  * Représente un étudiant pouvant effectuer des réservations de salles.

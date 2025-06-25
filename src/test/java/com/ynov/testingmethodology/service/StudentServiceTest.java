@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import repository.StudentRepository;
+import com.ynov.testingmethodology.repository.StudentRepository;
 import java.time.LocalDateTime;
 import java.util.*;
-import model.Student;
+import com.ynov.testingmethodology.model.Student;
 import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -49,7 +49,7 @@ public class StudentServiceTest {
         @DisplayName("NominalCase - should return student")
         public void registerStudentTestNominalCase(){
             //Given
-            Student student = new model.Student("1","Eliot","Louys");
+            Student student = new Student("1","Eliot","Louys");
             when(studentRepository.save(student)).thenReturn(student);
 
             //When
@@ -63,7 +63,7 @@ public class StudentServiceTest {
         @DisplayName("Student already exists - should return Illegal argument exception")
         public void registerStudentTestStudentAlreadyExists(){
             //Given
-            Student student = new model.Student("1","Eliot","Louys");
+            Student student = new Student("1","Eliot","Louys");
             when(studentRepository.existsByID(student.getId())).thenReturn(true);
 
             //Then
@@ -84,7 +84,7 @@ public class StudentServiceTest {
         @DisplayName("Student id null - should return Illegal argument exception")
         public void registerStudentTestStudentIdNull(){
             //Given
-            Student student = new model.Student(null,"Eliot","Louys");
+            Student student = new Student(null,"Eliot","Louys");
 
             //Then
             assertThrows(IllegalArgumentException.class,()->{studentService.registerStudent(student);});
@@ -94,7 +94,7 @@ public class StudentServiceTest {
         @DisplayName("Student id empty - should return Illegal argument exception")
         public void registerStudentTestStudentIdEmpty(){
             //Given
-            Student student = new model.Student("  ","Eliot","Louys");
+            Student student = new Student("  ","Eliot","Louys");
 
             //Then
             assertThrows(IllegalArgumentException.class,()->{studentService.registerStudent(student);});
@@ -104,7 +104,7 @@ public class StudentServiceTest {
         @DisplayName("Student First Name null - should return Illegal argument exception")
         public void registerStudentTestStudentFirstNameNull(){
             //Given
-            Student student = new model.Student("1",null,"Louys");
+            Student student = new Student("1",null,"Louys");
 
             //Then
             assertThrows(IllegalArgumentException.class,()->{studentService.registerStudent(student);});
@@ -114,7 +114,7 @@ public class StudentServiceTest {
         @DisplayName("Student First Name empty - should return Illegal argument exception")
         public void registerStudentTestStudentFirstNameEmpty(){
             //Given
-            Student student = new model.Student("1","  ","Louys");
+            Student student = new Student("1","  ","Louys");
 
             //Then
             assertThrows(IllegalArgumentException.class,()->{studentService.registerStudent(student);});
@@ -124,7 +124,7 @@ public class StudentServiceTest {
         @DisplayName("Student Last Name null - should return Illegal argument exception")
         public void registerStudentTestStudentLastNameNull(){
             //Given
-            Student student = new model.Student("1","Eliot",null);
+            Student student = new Student("1","Eliot",null);
 
             //Then
             assertThrows(IllegalArgumentException.class,()->{studentService.registerStudent(student);});
@@ -134,7 +134,7 @@ public class StudentServiceTest {
         @DisplayName("Student Last Name empty - should return Illegal argument exception")
         public void registerStudentTestStudentLastNameEmpty(){
             //Given
-            Student student = new model.Student("1","Eliot","  ");
+            Student student = new Student("1","Eliot","  ");
 
             //Then
             assertThrows(IllegalArgumentException.class,()->{studentService.registerStudent(student);});
@@ -180,8 +180,8 @@ public class StudentServiceTest {
         @DisplayName("Nominal case - Should return a list of students")
         public void getAllStudentsTestNominalCase(){
             //Given
-            Student student = new model.Student("1","Eliot","Louys");
-            Student student2 = new model.Student("2","Samuel","Leobon");
+            Student student = new Student("1","Eliot","Louys");
+            Student student2 = new Student("2","Samuel","Leobon");
             List<Student> students = Arrays.asList(student,student2);
             when(studentRepository.findAll()).thenReturn(students);
 
@@ -202,7 +202,7 @@ public class StudentServiceTest {
         public void getStudentByIdTestNominalCase(){
             //Given
             String id = "1";
-            Student student = new model.Student("1","Eliot","Louys");
+            Student student = new Student("1","Eliot","Louys");
             when(studentRepository.findById(id)).thenReturn(Optional.of(student));
 
             //When

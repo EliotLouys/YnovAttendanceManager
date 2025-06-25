@@ -1,4 +1,4 @@
-package model;
+package com.ynov.testingmethodology.model;
 
 public class Room {
     private String id;
