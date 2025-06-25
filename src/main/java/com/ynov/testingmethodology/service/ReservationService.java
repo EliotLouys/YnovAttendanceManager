@@ -115,6 +115,9 @@ public class ReservationService {
         if (reservation.getRoom() == null) {
             throw new IllegalArgumentException("Room is required");
         }
+        if (reservation.getStudents() == null || reservation.getStudents().isEmpty()) {
+            throw new IllegalArgumentException("Student(s) are required");
+        }
         LocalDateTime start = reservation.getStartTime();
         LocalDateTime end = reservation.getEndTime();
         if (start == null || end == null) {

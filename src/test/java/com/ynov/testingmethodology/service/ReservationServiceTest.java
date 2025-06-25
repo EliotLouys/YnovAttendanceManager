@@ -121,6 +121,26 @@ public class ReservationServiceTest {
         }
 
         @Test
+        @DisplayName("Null students - should throw IllegalArgumentException")
+        void createReservation_withNullStudents_ShouldThrowIllegalArgumentException() {
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+            res.setStudents(null);
+            assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+        }
+
+        @Test
+        @DisplayName("Empty students - should throw IllegalArgumentException")
+        void createReservation_withEmptyStudents_ShouldThrowIllegalArgumentException() {
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+            res.setStudents(Arrays.asList());
+            assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+        }
+
+        @Test
         @DisplayName("Null start or end time - should throw IllegalArgumentException")
         void createReservation_withNullStartTime_ShouldThrowIllegalArgumentException() {
             // Given
