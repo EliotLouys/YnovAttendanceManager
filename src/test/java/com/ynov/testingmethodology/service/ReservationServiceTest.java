@@ -157,31 +157,43 @@ public class ReservationServiceTest {
     class UpdateReservationTests {
         @Test
         @DisplayName("Nominal case - should update and return reservation")
-        void updateNominal() {
+        void updateReservation_withValidDate_ShouldReturnUpdatedReservation() {
+            // Given
             Reservation res = new Reservation("res1", Arrays.asList(s1), room,
                     LocalDateTime.of(2025, 6, 25, 10, 0),
                     LocalDateTime.of(2025, 6, 25, 12, 0));
             when(reservationRepo.findAll()).thenReturn(Arrays.asList(res));
-            doNothing().when(reservationRepo).save(res);
+            when(reservationRepo.save(res)).thenReturn(res);
 
+            // When
             Reservation result = reservationService.updateReservation(res);
 
+            // Then
             assertEquals(res, result);
             verify(reservationRepo).save(res);
         }
 
         @Test
         @DisplayName("Null or empty id - should throw IllegalArgumentException")
-        void updateInvalidId() {
-            Reservation res = sampleReservation();
+        void updateReservation_withInvalidId_ShouldThrowIllegalArgumentException() {
+            // Given
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+
+            // When
             res.setId(" ");
+
+            // Then
             assertThrows(IllegalArgumentException.class, () -> reservationService.updateReservation(res));
         }
 
         @Test
         @DisplayName("Non-existing reservation - should throw IllegalArgumentException")
-        void updateNonExisting() {
-            Reservation res = sampleReservation();
+        void updateReservation_withNonExistingReservation_ShouldThrowIllegalArgumentException() {
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
             when(reservationRepo.findAll()).thenReturn(Collections.emptyList());
 
             assertThrows(IllegalArgumentException.class, () -> reservationService.updateReservation(res));
