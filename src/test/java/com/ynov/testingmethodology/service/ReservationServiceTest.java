@@ -62,7 +62,7 @@ public class ReservationServiceTest {
     @DisplayName("createReservation Tests")
     class CreateReservationTests {
         @Test
-        @DisplayName("Should save and return reservation")
+        @DisplayName("Valid reservation - should save and return reservation")
         void createReservation_withValidReservation_shouldReturnReservation() {
             when(reservationRepo.save(testReservation)).thenReturn(testReservation);
 
@@ -75,7 +75,7 @@ public class ReservationServiceTest {
         }
 
         @Test
-        @DisplayName("should throw IllegalArgumentException")
+        @DisplayName("Null reservation - should throw IllegalArgumentException")
         void createReservation_withNull_ShouldThrowIllegalArgumentException() {
             assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(null));
         }
@@ -112,7 +112,7 @@ public class ReservationServiceTest {
 
         @Test
         @DisplayName("Null start or end time - should throw IllegalArgumentException")
-        void createReservation_withNullStartEndTime_ShouldThrowIllegalArgumentException() {
+        void createReservation_withNullStartTime_ShouldThrowIllegalArgumentException() {
             // Given
             Reservation res = new Reservation("res1", Arrays.asList(s1), room,
                     LocalDateTime.of(2025, 6, 25, 10, 0),
@@ -121,14 +121,23 @@ public class ReservationServiceTest {
             // When and then
             res.setStartTime(null);
             assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+        }
 
-            res.setStartTime(LocalDateTime.now());
+        @Test
+        @DisplayName("Null start or end time - should throw IllegalArgumentException")
+        void createReservation_withNullEndTime_ShouldThrowIllegalArgumentException() {
+            // Given
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+
+            // When and then
             res.setEndTime(null);
             assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
         }
 
         @Test
-        @DisplayName("End time before or equal to start time - should throw IllegalArgumentException")
+        @DisplayName("End time before start time - should throw IllegalArgumentException")
         void createReservation_withEndTimeBeforeStartTime_ShouldThrowIllegalArgumentException() {
             // Given
             Reservation res = new Reservation("res1", Arrays.asList(s1), room,
@@ -145,7 +154,7 @@ public class ReservationServiceTest {
         }
 
         @Test
-        @DisplayName("End time before or equal to start time - should throw IllegalArgumentException")
+        @DisplayName("End time equal to start time - should throw IllegalArgumentException")
         void createReservation_withEndTimeEqualStartTime_ShouldThrowIllegalArgumentException() {
             // Given
             Reservation res = new Reservation("res1", Arrays.asList(s1), room,
