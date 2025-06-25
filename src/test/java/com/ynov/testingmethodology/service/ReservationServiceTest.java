@@ -4,6 +4,7 @@ import com.ynov.testingmethodology.model.Reservation;
 import com.ynov.testingmethodology.model.Room;
 import com.ynov.testingmethodology.model.Student;
 import com.ynov.testingmethodology.repository.ReservationRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,57 +32,86 @@ public class ReservationServiceTest {
     @InjectMocks
     private ReservationService reservationService;
 
-    private Reservation sampleReservation() {
-        Student s1 = new Student("s1", "John", "Doe");
-        Room room = new Room("r1", "Room A", 30);
-        return new Reservation("res1", Arrays.asList(s1), room,
+    private Student s1;
+    private Student s2;
+    private Room room;
+    private Room room2;
+
+    private Reservation testReservation;
+    private Reservation savedReservation;
+
+    @BeforeEach
+    void setUp() {
+        // Create test data before each test
+        s1 = new Student("s1", "John", "Doe");
+        s2 = new Student("s2", "Jane", "Smith");
+        room2 = new Room("r1", "Room A", 30);
+        room = new Room("r2", "Room B", 40);
+
+        testReservation = new Reservation("res1", Arrays.asList(s1), room,
                 LocalDateTime.of(2025, 6, 25, 10, 0),
                 LocalDateTime.of(2025, 6, 25, 12, 0));
+
+
+        savedReservation = new Reservation("res2", Arrays.asList(s1,s2), room2,
+                LocalDateTime.of(2025, 7, 15, 10, 0),
+                LocalDateTime.of(2025, 7, 15, 12, 0));
     }
 
     @Nested
     @DisplayName("createReservation Tests")
     class CreateReservationTests {
         @Test
-        @DisplayName("Nominal case - should save and return reservation")
-        void createNominal() {
-            Reservation res = sampleReservation();
-            doNothing().when(reservationRepo).save(res);
+        @DisplayName("Should save and return reservation")
+        void createReservation_withValidReservation_shouldReturnReservation() {
+            when(reservationRepo.save(testReservation)).thenReturn(testReservation);
 
-            Reservation result = reservationService.createReservation(res);
+            Reservation result = reservationService.createReservation(new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0)));
 
-            assertEquals(res, result);
-            verify(reservationRepo).save(res);
+            assertEquals(testReservation, result);
+            verify(reservationRepo).save(testReservation);
         }
 
         @Test
-        @DisplayName("Null reservation - should throw IllegalArgumentException")
-        void createNull() {
+        @DisplayName("should throw IllegalArgumentException")
+        void createReservation_withNull_ShouldThrowIllegalArgumentException() {
             assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(null));
         }
 
         @Test
         @DisplayName("Invalid id - should throw IllegalArgumentException")
-        void createInvalidId() {
-            Reservation res = sampleReservation();
+        void createReservation_withInvalidId_ShouldThrowIllegalArgumentException() {
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
             res.setId("  ");
             assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
         }
 
         @Test
         @DisplayName("Null room - should throw IllegalArgumentException")
-        void createNullRoom() {
-            Reservation res = sampleReservation();
+        void createReservation_withNullRoom_ShouldThrowIllegalArgumentException() {
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
             res.setRoom(null);
             assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
         }
 
         @Test
         @DisplayName("Null start or end time - should throw IllegalArgumentException")
-        void createNullTimes() {
-            Reservation res = sampleReservation();
+        void createReservation_withNullStartEndTime_ShouldThrowIllegalArgumentException() {
+            // Given
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+
+            // When and then
             res.setStartTime(null);
             assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+
             res.setStartTime(LocalDateTime.now());
             res.setEndTime(null);
             assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
@@ -89,13 +119,35 @@ public class ReservationServiceTest {
 
         @Test
         @DisplayName("End time before or equal to start time - should throw IllegalArgumentException")
-        void createInvalidTimes() {
-            Reservation res = sampleReservation();
+        void createReservation_withEndTimeBeforeStartTime_ShouldThrowIllegalArgumentException() {
+            // Given
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+
+            // When
+            LocalDateTime start = LocalDateTime.of(2025, 6, 25, 10, 0);
+            res.setStartTime(start);
+            res.setEndTime(start.minusHours(1));
+
+            // Then
+            assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
+        }
+
+        @Test
+        @DisplayName("End time before or equal to start time - should throw IllegalArgumentException")
+        void createReservation_withEndTimeEqualStartTime_ShouldThrowIllegalArgumentException() {
+            // Given
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
+
+            // When
             LocalDateTime start = LocalDateTime.of(2025, 6, 25, 10, 0);
             res.setStartTime(start);
             res.setEndTime(start);
-            assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
-            res.setEndTime(start.minusHours(1));
+
+            // Then
             assertThrows(IllegalArgumentException.class, () -> reservationService.createReservation(res));
         }
     }
@@ -106,7 +158,9 @@ public class ReservationServiceTest {
         @Test
         @DisplayName("Nominal case - should update and return reservation")
         void updateNominal() {
-            Reservation res = sampleReservation();
+            Reservation res = new Reservation("res1", Arrays.asList(s1), room,
+                    LocalDateTime.of(2025, 6, 25, 10, 0),
+                    LocalDateTime.of(2025, 6, 25, 12, 0));
             when(reservationRepo.findAll()).thenReturn(Arrays.asList(res));
             doNothing().when(reservationRepo).save(res);
 
